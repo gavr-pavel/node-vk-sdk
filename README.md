@@ -40,46 +40,46 @@ vk.callMethod('users.get', {
 ##### Grouping several requests to a single
 There are two calls of the `execute` method in the snippet below, so only two request would be sent in fact.
 ```javascript
-VK.appendCall('users.get', {uid: 1})
+vk.appendCall('users.get', {uid: 1})
     .then(function (response) {
         console.log(JSON.stringify(response));
     })
     .catch(onError);
 
-VK.appendCall('friends.get', {uid: 1})
+vk.appendCall('friends.get', {uid: 1})
     .then(function (response) {
         console.log("\nFriends list: ", JSON.stringify(response));
     })
     .catch(onError);
 
-VK.appendCall('wall.get', {owner_id: 1})
+vk.appendCall('wall.get', {owner_id: 1})
     .then(function (response) {
         console.log("\nWall posts: ", JSON.stringify(response));
     })
     .catch(onError);
 
-VK.execute();
+vk.execute();
 
 
-VK.appendCall('users.get')
+vk.appendCall('users.get')
     .then(function (response) {
         console.log(JSON.stringify(response));
     })
     .catch(onError);
 
-VK.appendCall('friends.get')
+vk.appendCall('friends.get')
     .then(function (response) {
         console.log("\nFriends list: ", JSON.stringify(response));
     })
     .catch(onError);
 
-VK.appendCall('photos.getAlbums')
+vk.appendCall('photos.getAlbums')
     .then(function (response) {
         console.log("\nAlbums list: ", JSON.stringify(response));
     })
     .catch(onError);
 
-VK.execute();
+vk.execute();
 
 function onError (error) {
     console.log(JSON.stringify(error));
