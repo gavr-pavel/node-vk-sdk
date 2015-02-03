@@ -1,6 +1,6 @@
 {
   "name": "node-vk-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A little smarter way to do API requests",
   "main": "index.js",
   "scripts": {
@@ -22,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/gavr-pavel/node-vk-sdk/issues"
   },
-  "homepage": "https://github.com/gavr-pavel/node-vk-sdk"
+  "homepage": "https://github.com/gavr-pavel/node-vk-sdk",
+  "dependencies": {
+    "promise": "^6.1.0"
+  },
+  "devDependencies": {}
 }
