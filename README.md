@@ -9,8 +9,8 @@ A little smarter way to do API requests
 | `serverAuth(Object authParams)`                | `promise`   | Performs [Application Server Authorization](https://vk.com/dev/auth_server). `authParams` must contain `client_id` and `client_secret` properties.
 | `siteAuth(Object authParams)`                  | `promise`   | Performs [Sites Authorization](https://vk.com/dev/auth_sites). `authParams` must contain `client_id`, `client_secret`, `code`, `redirect_uri` properties.
 | `callMethod(String name, Object params)`       | `promise`   | Calls API method `method` with parameters `params`.
-| `appendCall(String methodName, Object params)` | `promise`   | Used to delay request until `execute` method will be called.
-| `execute()`                                    | `promise`   | Sends all delayed requests added by `appendCall` method.
+| `appendCall(String methodName, Object params)` | `promise`   | Used to delay request until `execute` method is called.
+| `execute()`                                    | `promise`   | Sends by one request all delayed calls added by `appendCall` method.
 
 
 ## Example of usage
