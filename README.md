@@ -1,4 +1,4 @@
-# node-vk-sdk
+# vk-sdk
 A little smarter way to do API requests
 
 ## Methods
@@ -17,7 +17,7 @@ A little smarter way to do API requests
 
 ##### Preparation
 ```javascript
-var vk = require('node-vk-sdk');
+var vk = require('vk-sdk');
 
 vk.setToken(/* access_token */);
 
