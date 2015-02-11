@@ -1,6 +1,6 @@
 {
-  "name": "node-vk-sdk",
-  "version": "0.1.1",
+  "name": "vk-sdk",
+  "version": "0.1.2",
   "description": "A little smarter way to do API requests",
   "main": "index.js",
   "scripts": {
