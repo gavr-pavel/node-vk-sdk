@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/gavr-pavel/node-vk-sdk",
   "dependencies": {
-    "promise": "^6.1.0"
+    "promise": "^7.0.4"
   },
   "devDependencies": {}
 }
