@@ -8,7 +8,7 @@ var Promise = require('promise'),
 
 var _delayed = [],
     _token,
-    _apiVersion = '5.37';
+    _apiVersion;
 
 
 module.exports.setToken = function (token) {
@@ -25,9 +25,8 @@ module.exports.setVersion = function (apiVersion) {
 
 module.exports.getAuthUrl = function (params) {
 
-    var params = params || {};
-
-    params.v = params.v || _apiVersion;
+    if (!params.v && _apiVersion)
+        params.v = _apiVersion;
 
     var options = {
         protocol: 'https',
@@ -45,16 +44,16 @@ module.exports.serverAuth = function (params) {
 
     return new Promise(function (resolve, reject) {
 
+        params.grant_type = 'client_credentials';
+
+        if (!params.v && _apiVersion)
+            params.v = _apiVersion;
+
         var options = {
             protocol: 'https',
             hostname: 'oauth.vk.com',
             pathname: '/access_token',
-            query: {
-                client_id: params.client_id,
-                client_secret: params.client_secret,
-                grant_type: 'client_credentials',
-                v: params.v || _apiVersion
-            }
+            query: params
         },
             url = urlLib.format(options);
 
@@ -77,16 +76,15 @@ module.exports.siteAuth = function (params) {
 
     return new Promise(function (resolve, reject) {
 
+        if (!params.v && _apiVersion)
+            params.v = _apiVersion;
+
+
         var options = {
             protocol: 'https',
             hostname: 'oauth.vk.com',
             pathname: '/access_token',
-            query: {
-                client_id: params.client_id,
-                client_secret: params.client_secret,
-                redirect_uri: params.redirect_uri,
-                code: params.code           
-            }
+            query: params
         },
             url = urlLib.format(options);
 
