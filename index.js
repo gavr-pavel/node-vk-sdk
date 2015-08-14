@@ -51,32 +51,9 @@ module.exports.getAuthUrl = function (params) {
 
 module.exports.serverAuth = function (params) {
 
-    return new Promise(function (resolve, reject) {
+    params.grant_type = 'client_credentials';
 
-        params.grant_type = 'client_credentials';
-
-        if (!params.v && _apiVersion)
-            params.v = _apiVersion;
-
-        var options = {
-            protocol: 'https',
-            hostname: 'oauth.vk.com',
-            pathname: '/access_token',
-            query: params
-        },
-            url = urlLib.format(options);
-
-        getRequest(url, function (response) {
-            var data = JSON.parse(response || null);
-            if (data.access_token) {
-                exports.setToken(data.access_token, data.expires_in);
-                resolve(data);
-            } else {
-                reject(data);
-            }
-        });
-
-    });
+    return exports.siteAuth(params);
 
 };
 
