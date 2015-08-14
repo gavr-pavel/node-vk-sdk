@@ -22,9 +22,5 @@
   "bugs": {
     "url": "https://github.com/gavr-pavel/node-vk-sdk/issues"
   },
-  "homepage": "https://github.com/gavr-pavel/node-vk-sdk",
-  "dependencies": {
-    "promise": "^7.0.4"
-  },
-  "devDependencies": {}
+  "homepage": "https://github.com/gavr-pavel/node-vk-sdk"
 }

@@ -1,7 +1,6 @@
 'use strict';
 
-var Promise = require('promise'),
-    https = require('https'),
+var https = require('https'),
     urlLib = require('url'),
     querystring = require('querystring');
 
