@@ -6,6 +6,8 @@ A little smarter way to do API requests
 | Method                                         | Returns     | Description
 | ---------------------------------------------- | ----------- | -----------
 | `setToken(String token)`                       | `this`      | Sets `token` which will be used for requests to VK API.
+| `setVersion(String apiVersion)`                | `this`      | Sets `v` for future API requests.
+| `getAuthUrl(Object authParams)`                | `string`    | Returns an URL to VK auth page.
 | `serverAuth(Object authParams)`                | `promise`   | Performs [Application Server Authorization](https://vk.com/dev/auth_server). `authParams` must contain `client_id` and `client_secret` properties.
 | `siteAuth(Object authParams)`                  | `promise`   | Performs [Sites Authorization](https://vk.com/dev/auth_sites). `authParams` must contain `client_id`, `client_secret`, `code`, `redirect_uri` properties.
 | `callMethod(String name, Object params)`       | `promise`   | Calls API method `method` with parameters `params`.
