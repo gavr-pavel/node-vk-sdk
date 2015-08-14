@@ -1,38 +1,58 @@
 'use strict';
 
-var Promise = require('promise');
-var https = require('https');
+var https = require('https'),
+    urlLib = require('url'),
+    querystring = require('querystring');
 
 
-var _delayed = [];
-var _token;
+var _delayed = [],
+    _token,
+    _tokenExpires = (new Date()).valueOf(),
+    _apiVersion;
 
 
-module.exports.setToken = function (token) {
-    _token = token;
+module.exports.setToken = function (token, expiresIn) {
+    
+    var now = (new Date()).valueOf();
+
+    _token = token; 
+    _tokenExpires = new Date(now + expiresIn*1000);
+
     return this;
+};
+
+module.exports.hasValidToken = function () {
+    return _token && (_tokenExpires > (new Date()).valueOf());
+}
+
+module.exports.setVersion = function (apiVersion) {
+    _apiVersion = apiVersion;
+    return this;
+};
+
+
+module.exports.getAuthUrl = function (params) {
+
+    if (!params.v && _apiVersion)
+        params.v = _apiVersion;
+
+    var options = {
+        protocol: 'https',
+        hostname: 'oauth.vk.com',
+        pathname: '/authorize',
+        query: params
+    };
+
+    return urlLib.format(options);
+
 };
 
 
 module.exports.serverAuth = function (params) {
 
-    return new Promise(function (resolve, reject) {
+    params.grant_type = 'client_credentials';
 
-        var url = 'https://oauth.vk.com/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=5.1&grant_type=client_credentials'
-            .replace('CLIENT_ID', params.client_id)
-            .replace('CLIENT_SECRET', params.client_secret);
-
-        getRequest(url, function (response) {
-            var data = JSON.parse(response || null);
-            if (data.access_token) {
-                exports.setToken(data.access_token);
-                resolve(data);
-            } else {
-                reject(data);
-            }
-        });
-
-    });
+    return exports.siteAuth(params);
 
 };
 
@@ -41,16 +61,21 @@ module.exports.siteAuth = function (params) {
 
     return new Promise(function (resolve, reject) {
 
-        var url = 'https://oauth.vk.com/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&code=CODE&redirect_uri=REDIRECT_URI'
-            .replace('CLIENT_ID', params.client_id)
-            .replace('CLIENT_SECRET', params.client_secret)
-            .replace('CODE', params.code)
-            .replace('REDIRECT_URI', params.redirect_uri);
+        if (!params.v && _apiVersion)
+            params.v = _apiVersion;
+
+        var options = {
+            protocol: 'https',
+            hostname: 'oauth.vk.com',
+            pathname: '/access_token',
+            query: params
+        },
+            url = urlLib.format(options);
 
         getRequest(url, function (response) {
             var data = JSON.parse(response || null);
             if (data.access_token) {
-                exports.setToken(data.access_token);
+                exports.setToken(data.access_token, data.expires_in);
                 resolve(data);
             } else {
                 reject(data);
@@ -152,7 +177,6 @@ module.exports.execute = function (captcha) {
 };
 
 
-
 function apiRequest (method, params, callback) {
 
     https.request({
@@ -196,13 +220,12 @@ function getRequest (url, callback) {
 
 
 function makeQueryString (params) {
-    return Object.keys(params || {})
-        .map(function (key) {
-            var encodedKey = encodeURIComponent(key);
-            var encodedValue = encodeURIComponent(params[key])
-            return encodedKey + '=' + encodedValue;
-        })
-        .concat(_token ? 'access_token=' + _token : '')
-        .join('&');
-}
+    var params = params || {};
 
+    params.access_token = _token;
+
+    if (!params.v && _apiVersion)
+        params.v = _apiVersion;
+
+    return querystring.stringify(params);
+}
