@@ -8,14 +8,23 @@ var Promise = require('promise'),
 
 var _delayed = [],
     _token,
+    _tokenExpires = (new Date()).valueOf(),
     _apiVersion;
 
 
-module.exports.setToken = function (token) {
-    _token = token;
+module.exports.setToken = function (token, expiresIn) {
+    
+    var now = (new Date()).valueOf();
+
+    _token = token; 
+    _tokenExpires = new Date(now + expiresIn*1000);
+
     return this;
 };
 
+module.exports.hasValidToken = function () {
+    return _token && (_tokenExpires > (new Date()).valueOf());
+}
 
 module.exports.setVersion = function (apiVersion) {
     _apiVersion = apiVersion;
@@ -60,7 +69,7 @@ module.exports.serverAuth = function (params) {
         getRequest(url, function (response) {
             var data = JSON.parse(response || null);
             if (data.access_token) {
-                exports.setToken(data.access_token);
+                exports.setToken(data.access_token, data.expires_in);
                 resolve(data);
             } else {
                 reject(data);
@@ -79,7 +88,6 @@ module.exports.siteAuth = function (params) {
         if (!params.v && _apiVersion)
             params.v = _apiVersion;
 
-
         var options = {
             protocol: 'https',
             hostname: 'oauth.vk.com',
@@ -91,7 +99,7 @@ module.exports.siteAuth = function (params) {
         getRequest(url, function (response) {
             var data = JSON.parse(response || null);
             if (data.access_token) {
-                exports.setToken(data.access_token);
+                exports.setToken(data.access_token, data.expires_in);
                 resolve(data);
             } else {
                 reject(data);
@@ -237,7 +245,7 @@ function getRequest (url, callback) {
 
 function makeQueryString (params) {
     var params = params || {};
-    
+
     params.access_token = _token;
 
     if (!params.v && _apiVersion)
