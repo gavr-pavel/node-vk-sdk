@@ -1,11 +1,14 @@
 'use strict';
 
-var Promise = require('promise');
-var https = require('https');
+var Promise = require('promise'),
+    https = require('https'),
+    urlLib = require('url'),
+    querystring = require('querystring');
 
 
-var _delayed = [];
-var _token;
+var _delayed = [],
+    _token,
+    _apiVersion;
 
 
 module.exports.setToken = function (token) {
@@ -14,13 +17,45 @@ module.exports.setToken = function (token) {
 };
 
 
+module.exports.setVersion = function (apiVersion) {
+    _apiVersion = apiVersion;
+    return this;
+};
+
+
+module.exports.getAuthUrl = function (params) {
+
+    if (!params.v && _apiVersion)
+        params.v = _apiVersion;
+
+    var options = {
+        protocol: 'https',
+        hostname: 'oauth.vk.com',
+        pathname: '/authorize',
+        query: params
+    };
+
+    return urlLib.format(options);
+
+};
+
+
 module.exports.serverAuth = function (params) {
 
     return new Promise(function (resolve, reject) {
 
-        var url = 'https://oauth.vk.com/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=5.1&grant_type=client_credentials'
-            .replace('CLIENT_ID', params.client_id)
-            .replace('CLIENT_SECRET', params.client_secret);
+        params.grant_type = 'client_credentials';
+
+        if (!params.v && _apiVersion)
+            params.v = _apiVersion;
+
+        var options = {
+            protocol: 'https',
+            hostname: 'oauth.vk.com',
+            pathname: '/access_token',
+            query: params
+        },
+            url = urlLib.format(options);
 
         getRequest(url, function (response) {
             var data = JSON.parse(response || null);
@@ -41,11 +76,17 @@ module.exports.siteAuth = function (params) {
 
     return new Promise(function (resolve, reject) {
 
-        var url = 'https://oauth.vk.com/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&code=CODE&redirect_uri=REDIRECT_URI'
-            .replace('CLIENT_ID', params.client_id)
-            .replace('CLIENT_SECRET', params.client_secret)
-            .replace('CODE', params.code)
-            .replace('REDIRECT_URI', params.redirect_uri);
+        if (!params.v && _apiVersion)
+            params.v = _apiVersion;
+
+
+        var options = {
+            protocol: 'https',
+            hostname: 'oauth.vk.com',
+            pathname: '/access_token',
+            query: params
+        },
+            url = urlLib.format(options);
 
         getRequest(url, function (response) {
             var data = JSON.parse(response || null);
@@ -152,7 +193,6 @@ module.exports.execute = function (captcha) {
 };
 
 
-
 function apiRequest (method, params, callback) {
 
     https.request({
@@ -196,13 +236,8 @@ function getRequest (url, callback) {
 
 
 function makeQueryString (params) {
-    return Object.keys(params || {})
-        .map(function (key) {
-            var encodedKey = encodeURIComponent(key);
-            var encodedValue = encodeURIComponent(params[key])
-            return encodedKey + '=' + encodedValue;
-        })
-        .concat(_token ? 'access_token=' + _token : '')
-        .join('&');
-}
+    var params = params || {};
+    params.access_token = _token;
 
+    return querystring.stringify(params);
+}
