@@ -237,7 +237,11 @@ function getRequest (url, callback) {
 
 function makeQueryString (params) {
     var params = params || {};
+    
     params.access_token = _token;
+
+    if (!params.v && _apiVersion)
+        params.v = _apiVersion;
 
     return querystring.stringify(params);
 }
