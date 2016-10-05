@@ -1,5 +1,5 @@
 # vk-sdk
-A little easier way to make API requests
+Easier way to make API requests
 
 ## Methods
 
