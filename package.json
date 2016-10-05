@@ -1,7 +1,7 @@
 {
   "name": "vk-sdk",
   "version": "0.1.2",
-  "description": "A little smarter way to do API requests",
+  "description": "Easier way to make API requests",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
